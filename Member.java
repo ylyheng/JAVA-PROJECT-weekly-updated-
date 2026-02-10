@@ -1,32 +1,22 @@
-public class Member {
-    private int memberId;
-    private String name;
-    private int borrowedBooks;
-
-    public Member(int memberId, String name) {
-        this.memberId = memberId;
+class Member {
+    String  name;
+    int memberId;
+    Book [] borrowedBooks;  
+    int borrowedBooksCount;
+    Member (String name, int memberId){
         this.name = name;
-        this.borrowedBooks = 0;
+        this.memberId = memberId;
+        this.borrowedBooks = new Book[5]; // Assuming a member can borrow up to 5 books
+        this.borrowedBooksCount = 0;
     }
-
-    public int getMemberId() {
-        return memberId;
+    boolean borrowBook(Book b) {
+        if (b == null) return false;
+        if (borrowedBooksCount < borrowedBooks.length) {
+            borrowedBooks[borrowedBooksCount] = b;
+            borrowedBooksCount++;
+            b.isborrowed = true;
+            return true;
+        }
+        return false;
     }
-
-    public String getName() {
-        return name;
     }
-
-    public int getBorrowedBooks() {
-        return borrowedBooks;
-    }
-
-    public void borrowBook() {
-        borrowedBooks++;
-    }
-
-    public void returnBook() {
-        borrowedBooks--;
-    }
-}
-
