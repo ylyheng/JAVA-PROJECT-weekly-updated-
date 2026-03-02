@@ -1,10 +1,14 @@
 class Library {
     Book[] books;
     int bookCount;
+    String libraryName;
+    boolean isOpen;
 
     Library(int capacity) {
         books = new Book[capacity];
         bookCount = 0;
+        libraryName = "Campus Library";
+        isOpen = true;
     }
 
     void addBook(Book b) {
