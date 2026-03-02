@@ -1,17 +1,23 @@
-import java.util.ArrayList;
+class Library {
+    Book[] books;
+    int bookCount;
 
-public class Library {
-
-    private ArrayList<Book> books = new ArrayList<>();
-
-    public void addBook(Book book) {
-        books.add(book);
+    Library(int capacity) {
+        books = new Book[capacity];
+        bookCount = 0;
     }
 
-    public Book findBook(int id) {
-        for (Book b : books) {
-            if (b.getBookId() == id) {
-                return b;
+    void addBook(Book b) {
+        if (b != null && bookCount < books.length) {
+            books[bookCount] = b;
+            bookCount++;
+        }
+    }
+
+    Book findBookByTitle(String title) {
+        for (int i = 0; i < bookCount; i++) {
+            if (books[i] != null && books[i].title.equals(title)) {
+                return books[i];
             }
         }
         return null;
