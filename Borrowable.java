@@ -1,5 +1,5 @@
-interface Borrowable {
-    boolean borrow();
-    boolean returnItem();
-    boolean isBorrowed();
+public interface Borrowable {
+    boolean borrow();   // mark item as borrowed
+    boolean returnItem(); // mark item as returned
+    boolean isBorrowed(); // check borrow status
 }
