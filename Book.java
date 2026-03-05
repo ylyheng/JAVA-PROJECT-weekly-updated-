@@ -1,14 +1,36 @@
-class Book{
-    String title;
-    String author;
-    int publicationYear;
+class Book extends LibraryItem implements Borrowable {
     boolean isborrowed;
-    int publishedYearSnapshot;
-    Book(String title, String author, int publicationYear){
-        this.title = title;
-        this.author = author;
-        this.publicationYear = publicationYear;
+
+    Book(String title, String author, int publicationYear) {
+        super(title, author, publicationYear);
         this.isborrowed = false;
-        this.publishedYearSnapshot = publicationYear;
-    }   
+    }
+
+    @Override
+    public boolean borrow() {
+        if (isborrowed) {
+            return false;
+        }
+        isborrowed = true;
+        return true;
+    }
+
+    @Override
+    public boolean returnItem() {
+        if (!isborrowed) {
+            return false;
+        }
+        isborrowed = false;
+        return true;
+    }
+
+    @Override
+    public boolean isBorrowed() {
+        return isborrowed;
+    }
+
+    @Override
+    String getItemType() {
+        return "Book";
+    }
 }
