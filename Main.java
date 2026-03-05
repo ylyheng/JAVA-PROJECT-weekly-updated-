@@ -33,12 +33,11 @@ public class Main {
         System.out.println("\n👤 Member Borrowing Books:");
         System.out.println("────────────────────────────────────────");
 
-        // fixed: use findBook() helper to safely cast LibraryItem -> Book
-        borrowAndLog(alice,   findBook(library, "Clean Code"),             txId++);
-        borrowAndLog(alice,   findBook(library, "Effective Java"),         txId++);
-        borrowAndLog(bob,     findBook(library, "Design Patterns"),        txId++);
-        borrowAndLog(bob,     findBook(library, "Clean Code"),             txId++); // already borrowed
-        borrowAndLog(charlie, findBook(library, "Java Basics"),            txId++);
+        borrowAndLog(alice,   library.findBookByTitle("Clean Code"),             txId++);
+        borrowAndLog(alice,   library.findBookByTitle("Effective Java"),         txId++);
+        borrowAndLog(bob,     library.findBookByTitle("Design Patterns"),        txId++);
+        borrowAndLog(bob,     library.findBookByTitle("Clean Code"),             txId++); // already borrowed
+        borrowAndLog(charlie, library.findBookByTitle("Java Basics"),            txId++);
 
         // =============================================
         // Show borrowed books per member
@@ -62,8 +61,8 @@ public class Main {
         System.out.println("\n🔄 Returning Books:");
         System.out.println("────────────────────────────────────────");
 
-        returnAndLog(alice, findBook(library, "Clean Code"),      txId++);
-        returnAndLog(bob,   findBook(library, "Design Patterns"), txId++);
+        returnAndLog(alice, library.findBookByTitle("Clean Code"),      txId++);
+        returnAndLog(bob,   library.findBookByTitle("Design Patterns"), txId++);
 
         // =============================================
         // Final available books
@@ -75,13 +74,6 @@ public class Main {
         System.out.println("\n╔══════════════════════════════════════╗");
         System.out.println("║         END OF SESSION               ║");
         System.out.println("╚══════════════════════════════════════╝");
-    }
-
-    // Safe helper: find and cast LibraryItem to Book
-    static Book findBook(Library library, String title) {
-        LibraryItem item = library.findBookByTitle(title);
-        if (item instanceof Book) return (Book) item;
-        return null;
     }
 
     // Helper: borrow and log transaction
