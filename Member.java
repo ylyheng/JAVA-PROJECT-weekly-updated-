@@ -11,11 +11,24 @@ class Member {
     }
     boolean borrowBook(Book b) {
         if (b == null) return false;
+        if (b.isBorrowed()) return false;
         if (borrowedBooksCount < borrowedBooks.length) {
             borrowedBooks[borrowedBooksCount] = b;
             borrowedBooksCount++;
-            b.isborrowed = true;
-            return true;
+            return b.borrow();
+        }
+        return false;
+    }
+
+    boolean returnBook(Book b) {
+        if (b == null) return false;
+        for (int i = 0; i < borrowedBooksCount; i++) {
+            if (borrowedBooks[i] == b) {
+                borrowedBooks[i] = borrowedBooks[borrowedBooksCount - 1];
+                borrowedBooks[borrowedBooksCount - 1] = null;
+                borrowedBooksCount--;
+                return b.returnItem();
+            }
         }
         return false;
     }
