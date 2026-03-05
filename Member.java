@@ -24,7 +24,7 @@ public class Member {
             System.out.println(name + " has reached the borrow limit of " + MAX_BORROWED_BOOKS + ".");
             return false;
         }
-        b.borrow(); // calls Borrowable interface method
+        b.setBorrowed(true); // calls Borrowable interface method
         borrowedBooks[borrowedBooksCount] = b;
         borrowedBooksCount++;
         return true;
@@ -35,7 +35,7 @@ public class Member {
         if (b == null) return false;
         for (int i = 0; i < borrowedBooksCount; i++) {
             if (borrowedBooks[i] == b) {
-                b.returnItem(); // calls Borrowable interface method
+                b.setBorrowed(false); // calls Borrowable interface method
                 for (int j = i; j < borrowedBooksCount - 1; j++) {
                     borrowedBooks[j] = borrowedBooks[j + 1];
                 }

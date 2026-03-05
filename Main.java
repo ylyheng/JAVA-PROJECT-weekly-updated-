@@ -18,10 +18,10 @@ public class Main {
         aliasBook.setTitle("Updated Java Basics");
         System.out.println("F2: Object alias — book1.title = " + book1.getTitle());
 
-        // F3: Array holds references
-        Library lib = new Library(10);
-        lib.addBook(book1);
-        System.out.println("F3: Array reference check — " + lib.findBookByTitle("Updated Java Basics"));
+        // F3: Array holds references — no cast needed, Book extends LibraryItem
+        // Library lib = new Library(10);
+        // lib.addBook(book1);
+        // System.out.println("F3: Array reference check — " + lib.findBookByTitle("Updated Java Basics"));
 
         // F4: Snapshot (final field) stays unchanged even when original changes
         System.out.println("F4: Snapshot year = " + book1.getPublishedYearSnapshot());
@@ -29,8 +29,8 @@ public class Main {
         System.out.println("F4: After change, snapshot stays = " + book1.getPublishedYearSnapshot());
 
         // Null safety: searching for a non-existent book
-        Book missing = lib.findBookByTitle("Not Here");
-        System.out.println("Null safety: " + (missing == null ? "Book not found (null returned)" : missing));
+        // LibraryItem missing = lib.findBookByTitle("Not Here");
+        // System.out.println("Null safety: " + (missing == null ? "Book not found (null returned)" : missing));
 
         // =============================================
         // Week 2: Encapsulation Demo
@@ -39,10 +39,10 @@ public class Main {
 
         Book book2 = new Book("Clean Code", "Robert Martin", 2008);
         Book book3 = new Book("Design Patterns", "Gang of Four", 1994);
-        lib.addBook(book2);
-        lib.addBook(book3);
+        // lib.addBook(book2);
+        // lib.addBook(book3);
 
-        lib.printAvailableBooks();
+        // lib.printAvailableBooks();
 
         // =============================================
         // Full Borrow / Return Flow with Transactions
@@ -87,6 +87,6 @@ public class Main {
         }
 
         System.out.println();
-        lib.printAvailableBooks();
+        // lib.printAvailableBooks();
     }
 }
