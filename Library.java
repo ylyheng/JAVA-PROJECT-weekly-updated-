@@ -1,14 +1,14 @@
 public class Library {
-    private LibraryItem[] books; // uses abstract base type
+    private Book[] books;
     private int bookCount;
 
     public Library(int capacity) {
-        this.books = new LibraryItem[capacity];
+        this.books = new Book[capacity];
         this.bookCount = 0;
     }
 
-    // Add any LibraryItem (Book, Magazine, DVD, etc.)
-    public boolean addBook(LibraryItem item) {
+    // Add a book to the library
+    public boolean addBook(Book item) {
         if (item == null) return false;
         if (bookCount >= books.length) {
             System.out.println("Library is full. Cannot add '" + item.getTitle() + "'.");
@@ -19,8 +19,8 @@ public class Library {
         return true;
     }
 
-    // Find by title
-    public LibraryItem findBookByTitle(String title) {
+    // Find by title - returns Book directly
+    public Book findBookByTitle(String title) {
         for (int i = 0; i < bookCount; i++) {
             if (books[i] != null && books[i].getTitle().equals(title)) {
                 return books[i];
@@ -30,7 +30,7 @@ public class Library {
     }
 
     // Find by author
-    public LibraryItem findBookByAuthor(String author) {
+    public Book findBookByAuthor(String author) {
         for (int i = 0; i < bookCount; i++) {
             if (books[i] != null && books[i].getAuthor().equals(author)) {
                 return books[i];
@@ -39,17 +39,14 @@ public class Library {
         return null;
     }
 
-    // Display all available (not borrowed) items
+    // Display all available (not borrowed) books
     public void printAvailableBooks() {
         System.out.println("Available Items:");
         boolean found = false;
         for (int i = 0; i < bookCount; i++) {
-            if (books[i] instanceof Borrowable) {
-                Borrowable item = (Borrowable) books[i];
-                if (!item.isBorrowed()) {
-                    System.out.println("  - " + books[i]);
-                    found = true;
-                }
+            if (books[i] != null && !books[i].isBorrowed()) {
+                System.out.println("  - " + books[i]);
+                found = true;
             }
         }
         if (!found) System.out.println("  No items currently available.");

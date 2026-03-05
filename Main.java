@@ -1,92 +1,114 @@
 public class Main {
     public static void main(String[] args) {
 
-        // =============================================
-        // Week 3: Primitives vs References Demo
-        // =============================================
-        System.out.println("=== Week 3: Primitives vs References ===\n");
+        System.out.println("╔══════════════════════════════════════╗");
+        System.out.println("║       LIBRARY MANAGEMENT SYSTEM      ║");
+        System.out.println("╚══════════════════════════════════════╝\n");
 
-        // F1: Primitive copy - changing copy does NOT affect original
-        int a = 10;
-        int b = a;
-        b = 20;
-        System.out.println("F1: Primitive copy — original a = " + a + ", copy b = " + b);
+        // --- Setup Library ---
+        Library library = new Library(10);
+        library.addBook(new Book("Clean Code", "Robert Martin", 2008));
+        library.addBook(new Book("The Pragmatic Programmer", "Andrew Hunt", 1999));
+        library.addBook(new Book("Design Patterns", "Gang of Four", 1994));
+        library.addBook(new Book("Effective Java", "Joshua Bloch", 2018));
+        library.addBook(new Book("Java Basics", "Author A", 2020));
 
-        // F2: Object alias - same reference, change affects both
-        Book book1 = new Book("Java Basics", "Author A", 2020);
-        Book aliasBook = book1;
-        aliasBook.setTitle("Updated Java Basics");
-        System.out.println("F2: Object alias — book1.title = " + book1.getTitle());
-
-        // F3: Array holds references — no cast needed, Book extends LibraryItem
-        // Library lib = new Library(10);
-        // lib.addBook(book1);
-        // System.out.println("F3: Array reference check — " + lib.findBookByTitle("Updated Java Basics"));
-
-        // F4: Snapshot (final field) stays unchanged even when original changes
-        System.out.println("F4: Snapshot year = " + book1.getPublishedYearSnapshot());
-        book1.setPublicationYear(2030);
-        System.out.println("F4: After change, snapshot stays = " + book1.getPublishedYearSnapshot());
-
-        // Null safety: searching for a non-existent book
-        // LibraryItem missing = lib.findBookByTitle("Not Here");
-        // System.out.println("Null safety: " + (missing == null ? "Book not found (null returned)" : missing));
-
-        // =============================================
-        // Week 2: Encapsulation Demo
-        // =============================================
-        System.out.println("\n=== Week 2: Encapsulation ===\n");
-
-        Book book2 = new Book("Clean Code", "Robert Martin", 2008);
-        Book book3 = new Book("Design Patterns", "Gang of Four", 1994);
-        // lib.addBook(book2);
-        // lib.addBook(book3);
-
-        // lib.printAvailableBooks();
-
-        // =============================================
-        // Full Borrow / Return Flow with Transactions
-        // =============================================
-        System.out.println("\n=== Borrow & Return Flow ===\n");
-
+        // --- Register Members ---
         Member alice = new Member("Alice", 1);
         Member bob = new Member("Bob", 2);
+        Member charlie = new Member("Charlie", 3);
 
         int txId = 1;
 
-        // Alice borrows book2
-        boolean borrowed = alice.borrowBook(book2);
-        if (borrowed) {
-            Transaction tx = new Transaction(txId++, alice, book2, Transaction.BORROW);
-            System.out.println("Logged: " + tx);
-        }
+        // =============================================
+        // Show all available books
+        // =============================================
+        System.out.println("📚 All Available Books:");
+        System.out.println("────────────────────────────────────────");
+        library.printAvailableBooks();
 
-        // Bob tries to borrow the same book (already borrowed)
-        borrowed = bob.borrowBook(book2);
-        if (!borrowed) {
-            System.out.println("Bob could not borrow '" + book2.getTitle() + "'.");
-        }
+        // =============================================
+        // Members borrow books
+        // =============================================
+        System.out.println("\n👤 Member Borrowing Books:");
+        System.out.println("────────────────────────────────────────");
 
-        // Bob borrows book3
-        borrowed = bob.borrowBook(book3);
-        if (borrowed) {
-            Transaction tx = new Transaction(txId++, bob, book3, Transaction.BORROW);
-            System.out.println("Logged: " + tx);
-        }
+        // fixed: use findBook() helper to safely cast LibraryItem -> Book
+        borrowAndLog(alice,   findBook(library, "Clean Code"),             txId++);
+        borrowAndLog(alice,   findBook(library, "Effective Java"),         txId++);
+        borrowAndLog(bob,     findBook(library, "Design Patterns"),        txId++);
+        borrowAndLog(bob,     findBook(library, "Clean Code"),             txId++); // already borrowed
+        borrowAndLog(charlie, findBook(library, "Java Basics"),            txId++);
 
-        System.out.println();
+        // =============================================
+        // Show borrowed books per member
+        // =============================================
+        System.out.println("\n📋 Borrowed Books Per Member:");
+        System.out.println("────────────────────────────────────────");
         alice.printBorrowedBooks();
         bob.printBorrowedBooks();
+        charlie.printBorrowedBooks();
 
-        // Alice returns book2
-        System.out.println();
-        boolean returned = alice.returnBook(book2);
-        if (returned) {
-            Transaction tx = new Transaction(txId++, alice, book2, Transaction.RETURN);
-            System.out.println("Logged: " + tx);
+        // =============================================
+        // Show remaining available books
+        // =============================================
+        System.out.println("\n📚 Currently Available Books:");
+        System.out.println("────────────────────────────────────────");
+        library.printAvailableBooks();
+
+        // =============================================
+        // Members return books
+        // =============================================
+        System.out.println("\n🔄 Returning Books:");
+        System.out.println("────────────────────────────────────────");
+
+        returnAndLog(alice, findBook(library, "Clean Code"),      txId++);
+        returnAndLog(bob,   findBook(library, "Design Patterns"), txId++);
+
+        // =============================================
+        // Final available books
+        // =============================================
+        System.out.println("\n📚 Available Books After Returns:");
+        System.out.println("────────────────────────────────────────");
+        library.printAvailableBooks();
+
+        System.out.println("\n╔══════════════════════════════════════╗");
+        System.out.println("║         END OF SESSION               ║");
+        System.out.println("╚══════════════════════════════════════╝");
+    }
+
+    // Safe helper: find and cast LibraryItem to Book
+    static Book findBook(Library library, String title) {
+        LibraryItem item = library.findBookByTitle(title);
+        if (item instanceof Book) return (Book) item;
+        return null;
+    }
+
+    // Helper: borrow and log transaction
+    static void borrowAndLog(Member member, Book book, int txId) {
+        if (book == null) return;
+        boolean success = member.borrowBook(book);
+        if (success) {
+            System.out.println("  [TX-" + txId + "] " + member.getName() +
+                               " borrowed '" + book.getTitle() + "' ✅");
+            new Transaction(txId, member, book, Transaction.BORROW);
+        } else {
+            System.out.println("  [TX-" + txId + "] " + member.getName() +
+                               " could not borrow '" + book.getTitle() + "' ❌");
         }
+    }
 
-        System.out.println();
-        // lib.printAvailableBooks();
+    // Helper: return and log transaction
+    static void returnAndLog(Member member, Book book, int txId) {
+        if (book == null) return;
+        boolean success = member.returnBook(book);
+        if (success) {
+            System.out.println("  [TX-" + txId + "] " + member.getName() +
+                               " returned '" + book.getTitle() + "' ✅");
+            new Transaction(txId, member, book, Transaction.RETURN);
+        } else {
+            System.out.println("  [TX-" + txId + "] " + member.getName() +
+                               " could not return '" + book.getTitle() + "' ❌");
+        }
     }
 }
