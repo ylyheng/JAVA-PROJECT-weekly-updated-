@@ -301,6 +301,8 @@ public class Library {
     public int getTotalMembers() { return members.size(); }
     public int getTotalTransactions() { return transactions.size(); }
     public int getNextTransactionId() { return nextTransactionId; }
+    public ArrayList<Book> getBooks() { return books; }
+    public ArrayList<Member> getMembers() { return members; }
 
     /**
      * Add transaction to history
