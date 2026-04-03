@@ -3,9 +3,8 @@ import java.awt.*;
 import java.util.ArrayList;
 
 /**
- * LibraryGUI - Graphical User Interface for Library Management System
- * Uses Swing for a user-friendly desktop application
- * Demonstrates GUI development with event handling and layout management
+ * LibraryGUI - Basic Graphical User Interface for Library Management System
+ * Simple Swing application with login and menu navigation
  */
 public class LibraryGUI extends JFrame {
     private Library library;
@@ -14,12 +13,9 @@ public class LibraryGUI extends JFrame {
     private ArrayList<Member> allMembers;
 
     // GUI Components
-    private JPanel mainPanel;
     private JTextArea outputArea;
     private JTextField inputField;
-    private JButton actionButton;
-    private JLabel userLabel;
-    private JLabel statusLabel;
+    private JButton submitButton;
 
     public LibraryGUI() {
         // Initialize library system
@@ -33,87 +29,55 @@ public class LibraryGUI extends JFrame {
 
         // Setup GUI
         setupGUI();
+        showWelcome();
     }
 
     /**
-     * Setup the GUI components
+     * Setup the GUI components - basic version
      */
     private void setupGUI() {
-        setTitle("Library Management System - GUI");
+        setTitle("Library Management System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(900, 700);
+        setSize(700, 600);
         setLocationRelativeTo(null);
 
-        // Main Panel
-        mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        // Main Panel with BorderLayout
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Top Panel - Title and Status
-        JPanel topPanel = new JPanel(new BorderLayout());
-        JLabel titleLabel = new JLabel("📚 Library Management System - OOP Demo");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        userLabel = new JLabel("Status: Not Logged In");
-        userLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        topPanel.add(titleLabel, BorderLayout.WEST);
-        topPanel.add(userLabel, BorderLayout.EAST);
-
-        // Output Area
-        outputArea = new JTextArea(20, 50);
+        // Output Area (text display)
+        outputArea = new JTextArea(20, 60);
         outputArea.setEditable(false);
         outputArea.setFont(new Font("Courier New", Font.PLAIN, 12));
-        outputArea.setBackground(new Color(240, 240, 240));
+        outputArea.setLineWrap(true);
+        outputArea.setWrapStyleWord(true);
+        outputArea.setBackground(new Color(245, 245, 245));
         JScrollPane scrollPane = new JScrollPane(outputArea);
 
         // Input Panel
         JPanel inputPanel = new JPanel(new BorderLayout(5, 5));
-        inputField = new JTextField(30);
-        actionButton = new JButton("Submit");
-        inputPanel.add(new JLabel("Input:"), BorderLayout.WEST);
+        inputPanel.setBorder(BorderFactory.createTitledBorder("Enter your choice:"));
+        
+        inputField = new JTextField(20);
+        submitButton = new JButton("Submit");
+
         inputPanel.add(inputField, BorderLayout.CENTER);
-        inputPanel.add(actionButton, BorderLayout.EAST);
-
-        // Status Label
-        statusLabel = new JLabel("Ready");
-        statusLabel.setFont(new Font("Arial", Font.ITALIC, 11));
-
-        // Button Panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        JButton loginButton = new JButton("Login");
-        JButton registerButton = new JButton("Register New Member");
-        JButton clearButton = new JButton("Clear Output");
-        JButton exitButton = new JButton("Exit");
-
-        buttonPanel.add(loginButton);
-        buttonPanel.add(registerButton);
-        buttonPanel.add(clearButton);
-        buttonPanel.add(exitButton);
+        inputPanel.add(submitButton, BorderLayout.EAST);
 
         // Add event listeners
-        actionButton.addActionListener(e -> processAction());
-        inputField.addActionListener(e -> processAction());
-        loginButton.addActionListener(e -> showLoginMenu());
-        registerButton.addActionListener(e -> registerMemberGUI());
-        clearButton.addActionListener(e -> outputArea.setText(""));
-        exitButton.addActionListener(e -> System.exit(0));
+        submitButton.addActionListener(e -> processInput());
+        inputField.addActionListener(e -> processInput());
 
         // Add components to main panel
-        mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.add(inputPanel, BorderLayout.SOUTH);
 
-        JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.add(statusLabel, BorderLayout.WEST);
-        bottomPanel.add(buttonPanel, BorderLayout.CENTER);
-        mainPanel.add(bottomPanel, BorderLayout.PAGE_END);
-
         add(mainPanel);
-
-        // Initial display
-        displayWelcomeMessage();
+        setVisible(true);
     }
 
     /**
-     * Initialize system data
+     * Initialize system data with default accounts
      */
     private void initializeSystemData() {
         Librarian lib1 = new Librarian(1001, "Admin", "admin@library.com", "EMP001", "Main Branch", 50000);
@@ -127,34 +91,51 @@ public class LibraryGUI extends JFrame {
     /**
      * Display welcome message
      */
-    private void displayWelcomeMessage() {
-        outputArea.setText("\n╔════════════════════════════════════════╗\n" +
-                "║  WELCOME TO LIBRARY MANAGEMENT SYSTEM  ║\n" +
-                "║      OOP-Based Java Application        ║\n" +
-                "║        With Swing GUI Interface        ║\n" +
-                "╚════════════════════════════════════════╝\n\n" +
-                "Click 'Login' button to get started or register as a new member.\n" +
-                "Default Librarian ID: 1001, Password: pass1\n" +
-                "Default Member ID: 2001, PIN: 1234\n");
+    private void showWelcome() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n========================================\n");
+        sb.append("  LIBRARY MANAGEMENT SYSTEM - GUI\n");
+        sb.append("========================================\n\n");
+        sb.append("DEFAULT ACCOUNTS:\n");
+        sb.append("Librarian ID: 1001, Password: pass1\n");
+        sb.append("Member ID: 2001, PIN: 1234\n\n");
+        sb.append("ACTIONS:\n");
+        sb.append("Type 'L' to login as Librarian\n");
+        sb.append("Type 'M' to login as Member\n");
+        sb.append("Type 'Q' to quit\n");
+        outputArea.setText(sb.toString());
     }
 
     /**
-     * Show login menu
+     * Process user input
      */
-    private void showLoginMenu() {
-        String[] options = {"Librarian", "Member", "Cancel"};
-        int choice = JOptionPane.showOptionDialog(this,
-                "Select User Type:", "Login",
-                JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                options,
-                options[0]);
+    private void processInput() {
+        String input = inputField.getText().trim().toUpperCase();
+        inputField.setText("");
 
-        if (choice == 0) {
-            librarianLogin();
-        } else if (choice == 1) {
-            memberLogin();
+        if (currentUser == null) {
+            // Not logged in - handle login options
+            if (input.equals("L")) {
+                librarianLogin();
+            } else if (input.equals("M")) {
+                memberLogin();
+            } else if (input.equals("Q")) {
+                System.exit(0);
+            } else {
+                appendOutput("Invalid option. Type 'L' for Librarian, 'M' for Member, or 'Q' to quit.\n");
+            }
+        } else {
+            // Logged in - handle menu actions
+            try {
+                int choice = Integer.parseInt(input);
+                if (currentUser instanceof Librarian) {
+                    handleLibrarianAction(choice);
+                } else if (currentUser instanceof Member) {
+                    handleMemberAction(choice);
+                }
+            } catch (NumberFormatException e) {
+                appendOutput("Please enter a valid number.\n");
+            }
         }
     }
 
@@ -162,11 +143,11 @@ public class LibraryGUI extends JFrame {
      * Librarian login
      */
     private void librarianLogin() {
-        JTextField libIdField = new JTextField("1001");
+        JTextField idField = new JTextField("1001");
         JPasswordField passField = new JPasswordField("pass1");
 
         Object[] fields = {
-                "Librarian ID:", libIdField,
+                "Librarian ID:", idField,
                 "Password:", passField
         };
 
@@ -175,22 +156,21 @@ public class LibraryGUI extends JFrame {
 
         if (result == JOptionPane.OK_OPTION) {
             try {
-                int librarianId = Integer.parseInt(libIdField.getText());
+                int libId = Integer.parseInt(idField.getText());
                 String password = new String(passField.getPassword());
 
-                if ((librarianId == 1001 && password.equals("pass1"))) {
+                if (libId == 1001 && password.equals("pass1")) {
                     for (Librarian lib : librarians) {
-                        if (lib.getUserId() == librarianId) {
+                        if (lib.getUserId() == libId) {
                             currentUser = lib;
-                            updateUserStatus();
                             showLibrarianMenu();
                             return;
                         }
                     }
                 }
-                errorMessage("Invalid credentials!");
+                appendOutput("Invalid credentials!\n");
             } catch (NumberFormatException e) {
-                errorMessage("Invalid Librarian ID!");
+                appendOutput("Invalid input!\n");
             }
         }
     }
@@ -199,11 +179,11 @@ public class LibraryGUI extends JFrame {
      * Member login
      */
     private void memberLogin() {
-        JTextField memIdField = new JTextField("2001");
+        JTextField idField = new JTextField("2001");
         JPasswordField pinField = new JPasswordField("1234");
 
         Object[] fields = {
-                "Member ID:", memIdField,
+                "Member ID:", idField,
                 "PIN:", pinField
         };
 
@@ -212,52 +192,21 @@ public class LibraryGUI extends JFrame {
 
         if (result == JOptionPane.OK_OPTION) {
             try {
-                int memberId = Integer.parseInt(memIdField.getText());
+                int memId = Integer.parseInt(idField.getText());
                 String pin = new String(pinField.getPassword());
 
                 if (pin.equals("1234")) {
                     for (Member member : allMembers) {
-                        if (member.getUserId() == memberId) {
+                        if (member.getUserId() == memId) {
                             currentUser = member;
-                            updateUserStatus();
                             showMemberMenu();
                             return;
                         }
                     }
                 }
-                errorMessage("Invalid Member ID or PIN!");
+                appendOutput("Invalid Member ID or PIN!\n");
             } catch (NumberFormatException e) {
-                errorMessage("Invalid Member ID!");
-            }
-        }
-    }
-
-    /**
-     * Register new member
-     */
-    private void registerMemberGUI() {
-        JTextField nameField = new JTextField();
-        JTextField emailField = new JTextField();
-
-        Object[] fields = {
-                "Name:", nameField,
-                "Email:", emailField
-        };
-
-        int result = JOptionPane.showConfirmDialog(this, fields, "Register New Member",
-                JOptionPane.OK_CANCEL_OPTION);
-
-        if (result == JOptionPane.OK_OPTION) {
-            String name = nameField.getText();
-            String email = emailField.getText();
-
-            if (!name.isEmpty() && !email.isEmpty()) {
-                int newMemberId = 2001 + allMembers.size();
-                Member newMember = new Member(newMemberId, name, email, "2024-04-04");
-                allMembers.add(newMember);
-                library.addMember(newMember);
-
-                successMessage("Member registered!\nID: " + newMemberId + "\nPIN: 1234");
+                appendOutput("Invalid input!\n");
             }
         }
     }
@@ -266,139 +215,156 @@ public class LibraryGUI extends JFrame {
      * Show librarian menu
      */
     private void showLibrarianMenu() {
-        outputArea.setText("\n╔════════════════════════════════════════╗\n" +
-                "║       LIBRARIAN MENU                   ║\n" +
-                "╠════════════════════════════════════════╣\n" +
-                "║  1. Add New Book                       ║\n" +
-                "║  2. View All Books                     ║\n" +
-                "║  3. Search Book                        ║\n" +
-                "║  4. Issue Book to Member              ║\n" +
-                "║  5. Accept Book Return                ║\n" +
-                "║  6. View All Members                  ║\n" +
-                "║  7. View Transactions                 ║\n" +
-                "║  8. Logout                            ║\n" +
-                "╚════════════════════════════════════════╝\n" +
-                "\nEnter your choice (1-8):\n");
-        statusLabel.setText("Waiting for librarian action...");
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n========================================\n");
+        sb.append("  LIBRARIAN MENU\n");
+        sb.append("  User: ").append(currentUser.getName()).append("\n");
+        sb.append("========================================\n");
+        sb.append("1. Add New Book\n");
+        sb.append("2. View All Books\n");
+        sb.append("3. Search Book by ID\n");
+        sb.append("4. Issue Book to Member\n");
+        sb.append("5. Accept Book Return\n");
+        sb.append("6. View All Members\n");
+        sb.append("7. View Transactions\n");
+        sb.append("0. Logout\n");
+        sb.append("========================================\n");
+        sb.append("Enter your choice (0-7):\n");
+        outputArea.setText(sb.toString());
     }
 
     /**
      * Show member menu
      */
     private void showMemberMenu() {
-        outputArea.setText("\n╔════════════════════════════════════════╗\n" +
-                "║         MEMBER MENU                    ║\n" +
-                "╠════════════════════════════════════════╣\n" +
-                "║  1. Browse Available Books            ║\n" +
-                "║  2. Borrow a Book                     ║\n" +
-                "║  3. View My Books                     ║\n" +
-                "║  4. View Fine Amount                  ║\n" +
-                "║  5. Pay Fine                          ║\n" +
-                "║  6. Logout                            ║\n" +
-                "╚════════════════════════════════════════╝\n" +
-                "\nEnter your choice (1-6):\n");
-        statusLabel.setText("Waiting for member action...");
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n========================================\n");
+        sb.append("  MEMBER MENU\n");
+        sb.append("  User: ").append(currentUser.getName()).append("\n");
+        sb.append("========================================\n");
+        sb.append("1. Browse Available Books\n");
+        sb.append("2. Borrow a Book\n");
+        sb.append("3. View My Borrowed Books\n");
+        sb.append("4. View My Fine Amount\n");
+        sb.append("5. Pay Fine\n");
+        sb.append("0. Logout\n");
+        sb.append("========================================\n");
+        sb.append("Enter your choice (0-5):\n");
+        outputArea.setText(sb.toString());
+    }
+    
+    /**
+     * Append message then show librarian menu
+     */
+    private void appendAndShowLibrarianMenu(String message) {
+        appendOutput(message);
+        appendOutput("\n========================================\n");
+        appendOutput("  LIBRARIAN MENU - Choose an action\n");
+        appendOutput("========================================\n");
+        appendOutput("1. Add New Book\n");
+        appendOutput("2. View All Books\n");
+        appendOutput("3. Search Book by ID\n");
+        appendOutput("4. Issue Book to Member\n");
+        appendOutput("5. Accept Book Return\n");
+        appendOutput("6. View All Members\n");
+        appendOutput("7. View Transactions\n");
+        appendOutput("0. Logout\n");
+        appendOutput("========================================\n");
+        appendOutput("Enter your choice (0-7):\n");
+    }
+    
+    /**
+     * Append message then show member menu
+     */
+    private void appendAndShowMemberMenu(String message) {
+        appendOutput(message);
+        appendOutput("\n========================================\n");
+        appendOutput("  MEMBER MENU - Choose an action\n");
+        appendOutput("========================================\n");
+        appendOutput("1. Browse Available Books\n");
+        appendOutput("2. Borrow a Book\n");
+        appendOutput("3. View My Borrowed Books\n");
+        appendOutput("4. View My Fine Amount\n");
+        appendOutput("5. Pay Fine\n");
+        appendOutput("0. Logout\n");
+        appendOutput("========================================\n");
+        appendOutput("Enter your choice (0-5):\n");
     }
 
     /**
-     * Process actions
+     * Handle librarian actions
      */
-    private void processAction() {
-        String input = inputField.getText().trim();
-        inputField.setText("");
-
-        if (currentUser == null) {
-            errorMessage("Please login first!");
-            return;
-        }
-
-        try {
-            int choice = Integer.parseInt(input);
-
-            if (currentUser instanceof Librarian) {
-                processLibrarianAction(choice);
-            } else if (currentUser instanceof Member) {
-                processMemberAction(choice);
-            }
-        } catch (NumberFormatException e) {
-            errorMessage("Please enter a valid number!");
-        }
-    }
-
-    /**
-     * Process librarian actions
-     */
-    private void processLibrarianAction(int choice) {
+    private void handleLibrarianAction(int choice) {
         switch (choice) {
             case 1:
-                addBookGUI();
+                addBook();
                 break;
             case 2:
-                viewAllBooksGUI();
+                viewAllBooks();
                 break;
             case 3:
-                searchBookGUI();
+                searchBook();
                 break;
             case 4:
-                issueBookGUI();
+                issueBook();
                 break;
             case 5:
-                acceptReturnGUI();
+                returnBook();
                 break;
             case 6:
-                viewMembersGUI();
+                viewMembers();
                 break;
             case 7:
-                viewTransactionsGUI();
+                viewTransactions();
                 break;
-            case 8:
+            case 0:
                 logout();
                 break;
             default:
-                errorMessage("Invalid choice! Please enter 1-8.");
+                appendOutput("Invalid choice. Please enter 0-7.\n");
+                showLibrarianMenu();
         }
     }
 
     /**
-     * Process member actions
+     * Handle member actions
      */
-    private void processMemberAction(int choice) {
+    private void handleMemberAction(int choice) {
         switch (choice) {
             case 1:
-                browseAvailableBooksGUI();
+                browseBooks();
                 break;
             case 2:
-                borrowBookGUI();
+                borrowBook();
                 break;
             case 3:
-                viewMyBooksGUI();
+                viewMyBooks();
                 break;
             case 4:
-                viewMyFineGUI();
+                viewMyFine();
                 break;
             case 5:
-                payFineGUI();
+                payFine();
                 break;
-            case 6:
+            case 0:
                 logout();
                 break;
             default:
-                errorMessage("Invalid choice! Please enter 1-6.");
+                appendOutput("Invalid choice. Please enter 0-5.\n");
+                showMemberMenu();
         }
     }
 
     // Librarian Actions
-    private void addBookGUI() {
+    private void addBook() {
         JTextField idField = new JTextField();
         JTextField titleField = new JTextField();
         JTextField authorField = new JTextField();
-        JTextField yearField = new JTextField();
 
         Object[] fields = {
                 "Book ID:", idField,
                 "Title:", titleField,
-                "Author:", authorField,
-                "Year:", yearField
+                "Author:", authorField
         };
 
         int result = JOptionPane.showConfirmDialog(this, fields, "Add New Book",
@@ -409,88 +375,60 @@ public class LibraryGUI extends JFrame {
                 int bookId = Integer.parseInt(idField.getText());
                 String title = titleField.getText();
                 String author = authorField.getText();
-                int year = Integer.parseInt(yearField.getText());
 
-                Book book = new Book(bookId, title, author, year);
-                library.addBook(book);
-                successMessage("Book added successfully!");
-                showLibrarianMenu();
+                if (!title.isEmpty() && !author.isEmpty()) {
+                    Book book = new Book(bookId, title, author, 2024);
+                    library.addBook(book);
+                    appendAndShowLibrarianMenu("\n✓ Book added successfully!\n");
+                } else {
+                    appendAndShowLibrarianMenu("\n✗ Please fill all fields.\n");
+                }
             } catch (NumberFormatException e) {
-                errorMessage("Invalid input format!");
+                appendAndShowLibrarianMenu("\n✗ Invalid Book ID.\n");
             }
         }
     }
 
-    private void viewAllBooksGUI() {
-        StringBuilder sb = new StringBuilder("\n════════════════════════════════════════\n");
-        sb.append("         ALL BOOKS IN LIBRARY\n");
-        sb.append("════════════════════════════════════════\n");
-
-        if (library.getTotalBooks() == 0) {
-            sb.append("No books available.\n");
-        } else {
-            LibraryUtils.printBooks(new ArrayList<>(library.getBooks()));
-        }
-
-        sb.append("════════════════════════════════════════\n");
-        sb.append("Total: ").append(library.getTotalBooks()).append(" | ");
-        sb.append("Available: ").append(library.getAvailableBooks().size()).append(" | ");
+    private void viewAllBooks() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n=== All Books in Library ===\n");
+        sb.append("================================================\n");
+        
+        // Get books from library (assuming getBooks() method exists)
+        // If getBooks() doesn't exist, this will need adjustment
+        sb.append("Total Books: ").append(library.getTotalBooks()).append("\n");
+        sb.append("Available: ").append(library.getAvailableBooks().size()).append("\n");
         sb.append("Borrowed: ").append(library.getBorrowedBooks().size()).append("\n");
-
-        outputArea.setText(sb.toString());
-        showLibrarianMenu();
+        sb.append("================================================\n");
+        appendAndShowLibrarianMenu(sb.toString());
     }
 
-    private void searchBookGUI() {
-        String[] options = {"By Title", "By ID", "By Author"};
-        int choice = JOptionPane.showOptionDialog(this,
-                "Search by:", "Search Book",
-                JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                options,
-                options[0]);
-
-        if (choice == 0) {
-            String title = JOptionPane.showInputDialog(this, "Enter title:");
-            if (title != null) {
-                Book book = library.findBookByTitle(title);
+    private void searchBook() {
+        String idStr = JOptionPane.showInputDialog(this, "Enter Book ID:");
+        if (idStr != null && !idStr.isEmpty()) {
+            try {
+                int bookId = Integer.parseInt(idStr);
+                Book book = library.findBookById(bookId);
+                
                 if (book != null) {
-                    successMessage("Book found:\n" + book);
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("\n=== Book Found ===\n");
+                    sb.append("ID: ").append(book.getBookId()).append("\n");
+                    sb.append("Title: ").append(book.getTitle()).append("\n");
+                    sb.append("Author: ").append(book.getAuthor()).append("\n");
+                    sb.append("Status: ").append(book.isBorrowed() ? "Borrowed" : "Available").append("\n");
+                    sb.append("==================\n");
+                    appendAndShowLibrarianMenu(sb.toString());
                 } else {
-                    errorMessage("Book not found!");
+                    appendAndShowLibrarianMenu("\n✗ Book with ID " + bookId + " not found.\n");
                 }
-            }
-        } else if (choice == 1) {
-            String idStr = JOptionPane.showInputDialog(this, "Enter Book ID:");
-            if (idStr != null) {
-                try {
-                    int id = Integer.parseInt(idStr);
-                    Book book = library.findBookById(id);
-                    if (book != null) {
-                        successMessage("Book found:\n" + book);
-                    } else {
-                        errorMessage("Book not found!");
-                    }
-                } catch (NumberFormatException e) {
-                    errorMessage("Invalid ID!");
-                }
-            }
-        } else if (choice == 2) {
-            String author = JOptionPane.showInputDialog(this, "Enter author:");
-            if (author != null) {
-                Book book = library.findBookByAuthor(author);
-                if (book != null) {
-                    successMessage("Book found:\n" + book);
-                } else {
-                    errorMessage("Book not found!");
-                }
+            } catch (NumberFormatException e) {
+                appendAndShowLibrarianMenu("\n✗ Invalid Book ID.\n");
             }
         }
-        showLibrarianMenu();
     }
 
-    private void issueBookGUI() {
+    private void issueBook() {
         JTextField memIdField = new JTextField();
         JTextField bookIdField = new JTextField();
 
@@ -510,28 +448,27 @@ public class LibraryGUI extends JFrame {
                 Member member = library.findMemberById(memberId);
                 Book book = library.findBookById(bookId);
 
-                if (member != null && book != null) {
+                if (member != null && book != null && !book.isBorrowed()) {
                     library.issueBook(member, book);
-                    successMessage("Book issued successfully!");
+                    appendAndShowLibrarianMenu("\n✓ Book \"" + book.getTitle() + "\" issued to " + member.getName() + "!\n");
                 } else {
-                    errorMessage("Member or Book not found!");
+                    appendAndShowLibrarianMenu("\n✗ Error: Member not found, book not found, or book already borrowed.\n");
                 }
             } catch (NumberFormatException e) {
-                errorMessage("Invalid input!");
+                appendAndShowLibrarianMenu("\n✗ Invalid input format.\n");
             }
         }
-        showLibrarianMenu();
     }
 
-    private void acceptReturnGUI() {
+    private void returnBook() {
         JTextField memIdField = new JTextField();
         JTextField bookIdField = new JTextField();
-        JTextField daysField = new JTextField("0");
+        JTextField daysLateField = new JTextField("0");
 
         Object[] fields = {
                 "Member ID:", memIdField,
                 "Book ID:", bookIdField,
-                "Days Late:", daysField
+                "Days Late:", daysLateField
         };
 
         int result = JOptionPane.showConfirmDialog(this, fields, "Accept Book Return",
@@ -541,183 +478,141 @@ public class LibraryGUI extends JFrame {
             try {
                 int memberId = Integer.parseInt(memIdField.getText());
                 int bookId = Integer.parseInt(bookIdField.getText());
-                int daysLate = Integer.parseInt(daysField.getText());
+                int daysLate = Integer.parseInt(daysLateField.getText());
 
                 Member member = library.findMemberById(memberId);
                 Book book = library.findBookById(bookId);
 
-                if (member != null && book != null) {
+                if (member != null && book != null && book.isBorrowed()) {
                     library.returnBook(member, book, daysLate);
-                    successMessage("Book returned successfully!");
+                    appendAndShowLibrarianMenu("\n✓ Book \"" + book.getTitle() + "\" returned by " + member.getName() + ". Days late: " + daysLate + "\n");
                 } else {
-                    errorMessage("Member or Book not found!");
+                    appendAndShowLibrarianMenu("\n✗ Error: Member not found, book not found, or book not borrowed.\n");
                 }
             } catch (NumberFormatException e) {
-                errorMessage("Invalid input!");
+                appendAndShowLibrarianMenu("\n✗ Invalid input format.\n");
             }
         }
-        showLibrarianMenu();
     }
 
-    private void viewMembersGUI() {
-        StringBuilder sb = new StringBuilder("\n════════════════════════════════════════\n");
-        sb.append("      ALL REGISTERED MEMBERS\n");
-        sb.append("════════════════════════════════════════\n");
-
+    private void viewMembers() {
+        StringBuilder sb = new StringBuilder("\n=== All Members ===\n");
         for (Member member : allMembers) {
-            sb.append(member).append("\n");
+            sb.append("ID: ").append(member.getUserId()).append(", Name: ").append(member.getName()).append("\n");
         }
-
-        sb.append("════════════════════════════════════════\n");
-        sb.append("Total members: ").append(allMembers.size()).append("\n");
-
-        outputArea.setText(sb.toString());
-        showLibrarianMenu();
+        appendAndShowLibrarianMenu(sb.toString());
     }
 
-    private void viewTransactionsGUI() {
-        StringBuilder sb = new StringBuilder("\n════════════════════════════════════════\n");
-        sb.append("       TRANSACTION HISTORY\n");
-        sb.append("════════════════════════════════════════\n");
-
-        if (library.getTotalTransactions() == 0) {
-            sb.append("No transactions recorded.\n");
-        }
-
-        sb.append("════════════════════════════════════════\n");
-        sb.append("Total transactions: ").append(library.getTotalTransactions()).append("\n");
-
-        outputArea.setText(sb.toString());
-        showLibrarianMenu();
+    private void viewTransactions() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n=== Transaction History ===\n");
+        sb.append("================================================\n");
+        sb.append("Total Transactions: ").append(library.getTotalTransactions()).append("\n");
+        sb.append("================================================\n");
+        appendAndShowLibrarianMenu(sb.toString());
     }
 
     // Member Actions
-    private void browseAvailableBooksGUI() {
-        StringBuilder sb = new StringBuilder("\n════════════════════════════════════════\n");
-        sb.append("    AVAILABLE BOOKS FOR BORROWING\n");
-        sb.append("════════════════════════════════════════\n");
-
-        ArrayList<Book> available = library.getAvailableBooks();
-        if (available.isEmpty()) {
-            sb.append("No books available.\n");
+    private void browseBooks() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n=== Available Books for Borrowing ===\n");
+        sb.append("================================================\n");
+        
+        ArrayList<Book> availableBooks = library.getAvailableBooks();
+        if (availableBooks.isEmpty()) {
+            sb.append("No books available at this moment.\n");
         } else {
-            available.forEach(book -> sb.append(book).append("\n"));
+            for (Book book : availableBooks) {
+                sb.append("ID: ").append(book.getBookId()).append(" | ");
+                sb.append("Title: ").append(book.getTitle()).append(" | ");
+                sb.append("Author: ").append(book.getAuthor()).append("\n");
+            }
         }
-
-        sb.append("════════════════════════════════════════\n");
-        outputArea.setText(sb.toString());
-        showMemberMenu();
+        sb.append("================================================\n");
+        appendAndShowMemberMenu(sb.toString());
     }
 
-    private void borrowBookGUI() {
-        String bookIdStr = JOptionPane.showInputDialog(this, "Enter Book ID:");
-        if (bookIdStr != null) {
+    private void borrowBook() {
+        String bookId = JOptionPane.showInputDialog(this, "Enter Book ID to borrow:");
+        if (bookId != null && !bookId.isEmpty()) {
             try {
-                int bookId = Integer.parseInt(bookIdStr);
-                Book book = library.findBookById(bookId);
+                int id = Integer.parseInt(bookId);
+                Book book = library.findBookById(id);
                 Member member = (Member) currentUser;
-
+                
                 if (book != null && !book.isBorrowed()) {
                     if (member.borrowBook(book)) {
-                        successMessage("Book borrowed successfully!");
+                        appendAndShowMemberMenu("\n✓ Successfully borrowed \"" + book.getTitle() + "\"!\n");
+                    } else {
+                        appendAndShowMemberMenu("\n✗ Could not borrow book at this time.\n");
                     }
+                } else if (book == null) {
+                    appendAndShowMemberMenu("\n✗ Book with ID " + id + " not found.\n");
                 } else {
-                    errorMessage("Book not found or already borrowed!");
+                    appendAndShowMemberMenu("\n✗ Book is already borrowed by someone else.\n");
                 }
             } catch (NumberFormatException e) {
-                errorMessage("Invalid Book ID!");
+                appendAndShowMemberMenu("\n✗ Invalid Book ID.\n");
+            }
+        } else {
+            showMemberMenu();
+        }
+    }
+
+    private void viewMyBooks() {
+        StringBuilder sb = new StringBuilder("\n=== My Borrowed Books ===\n");
+        Member member = (Member) currentUser;
+        if (member.getBorrowedBooks().isEmpty()) {
+            sb.append("No books borrowed.\n");
+        } else {
+            for (Book book : member.getBorrowedBooks()) {
+                sb.append("- ").append(book.getTitle()).append(" by ").append(book.getAuthor()).append("\n");
             }
         }
-        showMemberMenu();
+        appendAndShowMemberMenu(sb.toString());
     }
 
-    private void viewMyBooksGUI() {
+    private void viewMyFine() {
         Member member = (Member) currentUser;
-        StringBuilder sb = new StringBuilder("\n════════════════════════════════════════\n");
-        sb.append("       YOUR BORROWED BOOKS\n");
-        sb.append("════════════════════════════════════════\n");
-
-        ArrayList<Book> borrowed = member.getBorrowedBooks();
-        if (borrowed.isEmpty()) {
-            sb.append("You have no borrowed books.\n");
-        } else {
-            borrowed.forEach(book -> sb.append(book).append("\n"));
-        }
-
-        sb.append("════════════════════════════════════════\n");
-        outputArea.setText(sb.toString());
-        showMemberMenu();
+        appendAndShowMemberMenu("\nYour fine amount: $" + member.getFineAmount() + "\n");
     }
 
-    private void viewMyFineGUI() {
-        Member member = (Member) currentUser;
-        StringBuilder sb = new StringBuilder("\n════════════════════════════════════════\n");
-        sb.append("          FINE INFORMATION\n");
-        sb.append("════════════════════════════════════════\n");
-        sb.append("Current Fine: $").append(String.format("%.2f", member.getFineAmount())).append("\n");
-        if (member.getFineAmount() > 0) {
-            sb.append("⚠ Please pay your fine.\n");
-        } else {
-            sb.append("✓ No pending fines!\n");
-        }
-        sb.append("════════════════════════════════════════\n");
-
-        outputArea.setText(sb.toString());
-        showMemberMenu();
-    }
-
-    private void payFineGUI() {
-        Member member = (Member) currentUser;
-        if (member.getFineAmount() <= 0) {
-            errorMessage("No fines to pay!");
-            showMemberMenu();
-            return;
-        }
-
-        String amountStr = JOptionPane.showInputDialog(this, "Fine Amount: $" + 
-                String.format("%.2f", member.getFineAmount()) + "\nEnter amount to pay:");
-        if (amountStr != null) {
+    private void payFine() {
+        String amountStr = JOptionPane.showInputDialog(this, "Enter amount to pay:");
+        if (amountStr != null && !amountStr.isEmpty()) {
             try {
                 double amount = Double.parseDouble(amountStr);
-                if (member.payFine(amount)) {
-                    successMessage("Payment successful!\nRemaining fine: $" + 
-                            String.format("%.2f", member.getFineAmount()));
-                } else {
-                    errorMessage("Invalid amount!");
-                }
+                Member member = (Member) currentUser;
+                member.payFine(amount);
+                appendAndShowMemberMenu("\n✓ Paid $" + amount + ". Remaining fine: $" + member.getFineAmount() + "\n");
             } catch (NumberFormatException e) {
-                errorMessage("Invalid amount format!");
+                appendAndShowMemberMenu("\n✗ Invalid amount.\n");
             }
+        } else {
+            showMemberMenu();
         }
-        showMemberMenu();
     }
 
+    /**
+     * Logout
+     */
     private void logout() {
         currentUser = null;
-        updateUserStatus();
-        displayWelcomeMessage();
+        appendOutput("Logged out successfully.\n");
+        showWelcome();
     }
 
-    private void updateUserStatus() {
-        if (currentUser == null) {
-            userLabel.setText("Status: Not Logged In");
-        } else {
-            userLabel.setText("Status: Logged in as " + currentUser.getName() + " (" + currentUser.getRole() + ")");
-        }
+    /**
+     * Append text to output area
+     */
+    private void appendOutput(String text) {
+        outputArea.append(text);
     }
 
-    private void successMessage(String message) {
-        JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    private void errorMessage(String message) {
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
-    }
-
+    /**
+     * Main method to run the GUI
+     */
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            LibraryGUI frame = new LibraryGUI();
-            frame.setVisible(true);
-        });
+        SwingUtilities.invokeLater(() -> new LibraryGUI());
     }
 }
