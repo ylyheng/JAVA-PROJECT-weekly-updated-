@@ -102,6 +102,7 @@ public class LibraryGUI extends JFrame {
         sb.append("ACTIONS:\n");
         sb.append("Type 'L' to login as Librarian\n");
         sb.append("Type 'M' to login as Member\n");
+        sb.append("Type 'R' to register as new Member\n");
         sb.append("Type 'Q' to quit\n");
         outputArea.setText(sb.toString());
     }
@@ -119,10 +120,12 @@ public class LibraryGUI extends JFrame {
                 librarianLogin();
             } else if (input.equals("M")) {
                 memberLogin();
+            } else if (input.equals("R")) {
+                registerMember();
             } else if (input.equals("Q")) {
                 System.exit(0);
             } else {
-                appendOutput("Invalid option. Type 'L' for Librarian, 'M' for Member, or 'Q' to quit.\n");
+                appendOutput("Invalid option. Type 'L' for Librarian, 'M' for Member, 'R' to register, or 'Q' to quit.\n");
             }
         } else {
             // Logged in - handle menu actions
@@ -172,6 +175,54 @@ public class LibraryGUI extends JFrame {
             } catch (NumberFormatException e) {
                 appendOutput("Invalid input!\n");
             }
+        }
+    }
+
+    /**
+     * Register new member
+     */
+    private void registerMember() {
+        JTextField nameField = new JTextField();
+        JTextField emailField = new JTextField();
+
+        Object[] fields = {
+                "Name:", nameField,
+                "Email:", emailField
+        };
+
+        int result = JOptionPane.showConfirmDialog(this, fields, "Register New Member",
+                JOptionPane.OK_CANCEL_OPTION);
+
+        if (result == JOptionPane.OK_OPTION) {
+            String name = nameField.getText().trim();
+            String email = emailField.getText().trim();
+
+            if (!name.isEmpty() && !email.isEmpty()) {
+                // Generate new member ID
+                int newMemberId = 2000 + allMembers.size() + 1;
+                
+                // Create new member
+                Member newMember = new Member(newMemberId, name, email, "2024-04-04");
+                allMembers.add(newMember);
+                library.addMember(newMember);
+
+                // Show success message
+                appendOutput("\n" + "=".repeat(40) + "\n");
+                appendOutput("✓ REGISTRATION SUCCESSFUL!\n");
+                appendOutput("=".repeat(40) + "\n");
+                appendOutput("Your Member ID: " + newMemberId + "\n");
+                appendOutput("Default PIN: 1234\n");
+                appendOutput("Name: " + name + "\n");
+                appendOutput("Email: " + email + "\n");
+                appendOutput("\nYou can now login with 'L' or 'M'\n");
+                appendOutput("=".repeat(40) + "\n");
+                showWelcome();
+            } else {
+                appendOutput("\n✗ Registration failed. Please fill all fields.\n");
+                showWelcome();
+            }
+        } else {
+            showWelcome();
         }
     }
 
