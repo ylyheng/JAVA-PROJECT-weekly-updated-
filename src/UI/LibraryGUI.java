@@ -1,4 +1,12 @@
+package src.UI;
 import javax.swing.*;
+
+import src.model.Book;
+import src.model.Member;
+import src.model.User;
+import src.service.Librarian;
+import src.service.Library;
+
 import java.awt.*;
 import java.util.ArrayList;
 

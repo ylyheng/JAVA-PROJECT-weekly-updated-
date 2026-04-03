@@ -1,3 +1,4 @@
+package src.model;
 /**
  * Book class - represents a library book
  * Implements Borrowable interface to support borrowing functionality

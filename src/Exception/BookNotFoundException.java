@@ -1,3 +1,4 @@
+package src.Exception;
 /**
  * Custom Exception for Book not found scenarios
  */

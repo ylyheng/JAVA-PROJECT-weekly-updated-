@@ -1,3 +1,4 @@
+package src.model;
 public abstract class LibraryItem {
     private String title;
     private String author;

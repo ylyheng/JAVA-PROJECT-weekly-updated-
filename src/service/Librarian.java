@@ -1,3 +1,7 @@
+package src.service;
+
+import src.model.User;
+
 /**
  * Librarian class - represents a librarian
  * Inherits from User and demonstrates inheritance

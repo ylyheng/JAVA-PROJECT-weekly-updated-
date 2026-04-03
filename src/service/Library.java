@@ -1,4 +1,9 @@
+package src.service;
 import java.util.ArrayList;
+
+import src.model.Book;
+import src.model.Member;
+import src.model.Transaction;
 
 /**
  * Library class - manages all library operations

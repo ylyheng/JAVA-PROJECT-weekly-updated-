@@ -1,3 +1,5 @@
+package src.model;
+
 /**
  * User abstract class - base class for all library users
  * Demonstrates inheritance and abstraction
