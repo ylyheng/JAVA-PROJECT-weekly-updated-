@@ -1,0 +1,13 @@
+package src.Exception;
+/**
+ * Custom Exception for Book not found scenarios
+ */
+public class BookNotFoundException extends Exception {
+    public BookNotFoundException(String message) {
+        super(message);
+    }
+
+    public BookNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
